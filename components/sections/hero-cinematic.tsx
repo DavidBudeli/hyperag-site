@@ -1,12 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Terminal } from "lucide-react";
+import { ArrowRight, Terminal, BarChart3, LineChart, Target, Users } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { Dictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/lib/i18n";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 type HeroCinematicProps = {
   dictionary: Dictionary;
@@ -16,18 +16,10 @@ type HeroCinematicProps = {
 export function HeroCinematic({ dictionary, locale }: HeroCinematicProps) {
   const hero = dictionary.hero;
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [videoError, setVideoError] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    // Reduced motion check
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion && videoRef.current) {
-      videoRef.current.pause();
-    }
-
     const handleMouseMove = (e: MouseEvent) => {
-      // Small parallax/glow effect if not reduced motion
       if (!prefersReducedMotion) {
         setMousePosition({
           x: e.clientX,
@@ -35,69 +27,87 @@ export function HeroCinematic({ dictionary, locale }: HeroCinematicProps) {
         });
       }
     };
-
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   return (
-    <section className="relative min-h-[90svh] flex items-center justify-center overflow-hidden pt-24 pb-16 bg-navy-950">
+    <section className="relative min-h-[90svh] flex items-center justify-center overflow-hidden pt-24 pb-16 bg-navy-950 perspective-[2000px]">
       
-      {/* Background Media Container */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      {/* Motion Design UX Background - Real Client Experience UI Elements */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         
-        {/* Video Player */}
-        {!videoError && (
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            onError={() => setVideoError(true)}
-            className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-screen"
-            src="/videos/hero-bg.mp4"
-          />
-        )}
-
-        {/* Animated Mesh Gradient Background (Always rendered as base) */}
-        <div className="absolute inset-0 z-0 opacity-100">
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.3, 1],
-              rotate: [0, 180, 360],
-            }}
-            transition={{ duration: 25, ease: "linear", repeat: Infinity }}
-            className="absolute top-[-10%] left-[-20%] w-[70vw] h-[70vw] rounded-full bg-techBlue/40 blur-[120px] pointer-events-none mix-blend-screen"
-          />
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.4, 1],
-              rotate: [360, 180, 0],
-            }}
-            transition={{ duration: 30, ease: "linear", repeat: Infinity }}
-            className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-accent/30 blur-[150px] pointer-events-none mix-blend-screen"
-          />
-          
-          {/* Subtle Animated Grid */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] z-0" />
-        </div>
-
-        {/* Overlays - Reduced opacity so the mesh gradient shines through beautifully */}
-        <div className="absolute inset-0 bg-navy-950/20 z-10 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/80 to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.06] mix-blend-overlay z-10 pointer-events-none" />
-        
-        {/* Mouse Interactive Glow */}
+        {/* Floating UI Card 1: Revenue Chart */}
         <motion.div
-          className="absolute w-[600px] h-[600px] bg-techBlue/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen z-20 hidden md:block"
           animate={{
-            x: mousePosition.x - 250,
-            y: mousePosition.y - 250,
+            y: [-10, 20, -10],
+            rotateY: [10, 15, 10],
+            rotateX: [5, 10, 5],
           }}
-          transition={{ type: "tween", ease: "backOut", duration: 0.5 }}
-        />
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[15%] left-[5%] md:left-[10%] w-72 h-48 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 flex flex-col justify-between shadow-2xl opacity-40"
+        >
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2 text-neutral-300">
+              <LineChart className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs font-semibold uppercase">Revenue Growth</span>
+            </div>
+            <span className="text-emerald-400 text-sm font-bold">+124%</span>
+          </div>
+          <div className="flex items-end justify-between h-20 gap-2 mt-4">
+            {[30, 45, 60, 40, 80, 100].map((h, i) => (
+              <div key={i} className={`w-full rounded-sm ${i === 5 ? 'bg-accent' : 'bg-techBlue/50'}`} style={{ height: `${h}%` }} />
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Floating UI Card 2: User Funnel */}
+        <motion.div
+          animate={{
+            y: [20, -15, 20],
+            rotateY: [-10, -5, -10],
+            rotateZ: [-5, -2, -5],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-[40%] right-[5%] md:right-[15%] w-64 h-56 bg-black/40 backdrop-blur-lg border border-white/10 rounded-3xl p-6 shadow-2xl opacity-40 flex flex-col"
+        >
+          <div className="flex items-center gap-2 text-neutral-300 mb-4">
+            <Target className="w-4 h-4 text-accent" />
+            <span className="text-xs font-semibold uppercase">Conversion Funnel</span>
+          </div>
+          <div className="flex-1 flex flex-col gap-2">
+            <div className="w-full h-8 bg-white/10 rounded-full flex items-center px-4"><div className="text-[10px] text-white/50">Impressions (1.2M)</div></div>
+            <div className="w-[80%] mx-auto h-8 bg-techBlue/30 rounded-full flex items-center px-4"><div className="text-[10px] text-white/70">Clicks (84K)</div></div>
+            <div className="w-[50%] mx-auto h-8 bg-accent/40 rounded-full flex items-center px-4"><div className="text-[10px] text-white">Leads (12K)</div></div>
+          </div>
+        </motion.div>
+
+        {/* Floating UI Card 3: Active Users */}
+        <motion.div
+          animate={{
+            x: [-15, 15, -15],
+            y: [-10, 10, -10],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-[10%] left-[15%] md:left-[25%] w-48 bg-navy-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-4 shadow-2xl opacity-30"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+              <Users className="w-5 h-5 text-blue-400" />
+            </div>
+            <div>
+              <div className="text-[10px] text-neutral-400 uppercase tracking-widest font-bold">Active Users</div>
+              <div className="text-xl text-white font-bold">42,890</div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Overlays to blend the UI elements into the background */}
+        <div className="absolute inset-0 bg-navy-950/60 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-transparent to-navy-950/40 z-10" />
+        
+        {/* Soft center glow to highlight text */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] bg-techBlue/10 blur-[150px] rounded-full z-10" />
       </div>
 
       <div className="container-page relative z-30 mx-auto px-4 text-center flex flex-col items-center">
@@ -106,9 +116,9 @@ export function HeroCinematic({ dictionary, locale }: HeroCinematicProps) {
           initial={{ opacity: 0, filter: "blur(10px)", y: 20 }}
           animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 mb-8 text-sm text-neutral-300 backdrop-blur-md"
+          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 mb-8 text-sm text-neutral-300 backdrop-blur-md shadow-xl"
         >
-          <span className="flex h-2 w-2 rounded-full bg-accent" />
+          <span className="flex h-2 w-2 rounded-full bg-accent animate-pulse" />
           {hero.badge}
         </motion.div>
 
@@ -116,7 +126,7 @@ export function HeroCinematic({ dictionary, locale }: HeroCinematicProps) {
           initial={{ opacity: 0, filter: "blur(10px)", y: 30 }}
           animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
           transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-4xl text-5xl md:text-7xl lg:text-8xl font-medium tracking-tight text-white text-balance leading-[1.05]"
+          className="max-w-5xl text-5xl md:text-7xl lg:text-8xl font-medium tracking-tight text-white text-balance leading-[1.05]"
         >
           {hero.title}
         </motion.h1>
