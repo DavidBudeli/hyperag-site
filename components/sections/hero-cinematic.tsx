@@ -61,29 +61,27 @@ export function HeroCinematic({ dictionary, locale }: HeroCinematicProps) {
           />
         )}
 
-        {/* Fallback Mesh Gradient (if video fails) */}
-        {videoError && (
-          <>
-            <motion.div 
-              animate={{ 
-                scale: [1, 1.2, 1],
-                rotate: [0, 90, 0],
-                opacity: [0.1, 0.2, 0.1] 
-              }}
-              transition={{ duration: 20, ease: "linear", repeat: Infinity }}
-              className="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-techBlue/30 blur-[120px] pointer-events-none"
-            />
-            <motion.div 
-              animate={{ 
-                scale: [1, 1.5, 1],
-                rotate: [0, -90, 0],
-                opacity: [0.05, 0.15, 0.05] 
-              }}
-              transition={{ duration: 25, ease: "linear", repeat: Infinity }}
-              className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-accent/20 blur-[150px] pointer-events-none"
-            />
-          </>
-        )}
+        {/* Animated Mesh Gradient Background (Always rendered as base) */}
+        <>
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.2, 1],
+              rotate: [0, 90, 0],
+              opacity: [0.3, 0.5, 0.3] 
+            }}
+            transition={{ duration: 20, ease: "linear", repeat: Infinity }}
+            className="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-techBlue/30 blur-[120px] pointer-events-none"
+          />
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.5, 1],
+              rotate: [0, -90, 0],
+              opacity: [0.15, 0.35, 0.15] 
+            }}
+            transition={{ duration: 25, ease: "linear", repeat: Infinity }}
+            className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-accent/20 blur-[150px] pointer-events-none"
+          />
+        </>
 
         {/* Overlays */}
         <div className="absolute inset-0 bg-navy-950/60 z-10" />
